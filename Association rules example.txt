@@ -1,0 +1,45 @@
+Association rules overview
+Association rule learning finds if–then relationships between items in transactional data; common algorithms include Apriori and FP-Growth.
+
+Minimal Python example using mlxtend (Apriori + rules)
+# install: pip install mlxtend pandas
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# sample transactions
+transactions = [
+    ['milk', 'bread', 'butter'],
+    ['beer', 'diapers'],
+    ['milk', 'diapers', 'beer', 'bread'],
+    ['bread', 'butter'],
+    ['milk', 'bread', 'diapers', 'butter'],
+]
+
+# one-hot encode transactions
+te = TransactionEncoder()
+te_ary = te.fit(transactions).transform(transactions)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+
+# find frequent itemsets with minimum support 0.4
+freq_itemsets = apriori(df, min_support=0.4, use_colnames=True)
+
+# generate rules with minimum confidence 0.7
+rules = association_rules(freq_itemsets, metric="confidence", min_threshold=0.7)
+
+print(freq_itemsets)
+print(rules[['antecedents','consequents','support','confidence','lift']])
+
+
+
+Explanation of key steps and metrics
+- Convert transactions into a Boolean (one-hot) encoded DataFrame using TransactionEncoder.
+- Use apriori to discover frequent itemsets that meet a support threshold; support is fraction of transactions containing the itemset.
+- Use association_rules to generate candidate rules from frequent itemsets and filter by metrics such as confidence and lift.
+
+Example interpretation
+- A rule {bread, butter} → {milk} with support 0.4 and confidence 0.75 means 40% of transactions contain all three items and in 75% of transactions that contain bread and butter, milk is also present. Lift >1 indicates positive association beyond chance.
+
+Practical notes and references
+- For larger datasets use FP-Growth (available in mlxtend) or optimized implementations to avoid combinatorial explosion.
+- The code pattern above and explanations follow common tutorials and how-to guides for Apriori and mlxtend implementations.

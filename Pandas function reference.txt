@@ -1,0 +1,107 @@
+#  Pandas function
+#
+#
+import pandas as pd
+
+data=[["Mark",55,"italy","europe"],
+     ["john",33,"usa","america"],
+     ["cat e",12,"china","asia"]]
+
+
+df=pd.DataFrame(data=data,
+                columns=["name","age","country","continent"],
+                index=[1001,1000,1003,])
+
+
+rainfall=pd.DataFrame(data={"city 1":[300.1,100.2],
+                             "city 2":[400.3, 300.4],
+                             "city 3":[1000.5,1100.6]})
+
+
+
+
+df.info()
+df.columns
+
+df.index
+df.reset_index()
+
+df.set_index('Name', inplace=True)
+
+
+df.sort_index()
+df.sort_values(["continent","age"])
+
+df.index.name="user_id"
+df.columns.nadfme="properties"
+
+df.rename(columns={"name":"Name", "age":"Age"})
+
+df.drop(columns=["name","country"], index=[1000,1003])
+
+df.T
+
+df.loc[:,["name","age"]]    is equal     df[["name","age"]] #refers by columns 
+
+df.copy
+
+# adding new column
+df.loc[:,"discount"]=0
+df.loc[:,"price"]=[23,11,22,111]
+
+q1.dropna(how="all")
+
+df["continent"].duplicated()                       #show duplicated
+df.loc[df["continent"].duplicated(keep=False),:]   #show all duplicated
+
+
+df.to_excel('output.xlsx', index=False)   # save to excel parameters (same as csv)
+with pd.ExcelWriter('multi_sheet.xlsx') as writer:
+    df.to_excel(writer, sheet_name='People', index=False)
+    df.to_excel(writer, sheet_name='Backup', index=False)
+
+
+
+df.diff()
+df.diff(periods=2)
+
+# covnert to datetime object
+df['date_col'] = pd.to_datetime(df['date_col'], format='%m-%d-%Y')
+
+# extracts date only
+df['date_only'] = df['datetime_col'].dt.date
+
+
+
+df.to_csv('output_tab_separated.csv', sep='\t', index=False, header=False, na_rep='N/A')
+
+
+yan_record2['Date'].dt.strftime('%Y-%m-%d')
+
+# First row
+first_row = df.iloc[0]
+
+# Last row
+last_row = df.iloc[-1]
+
+=================================================================
+properties   name  age country continent
+user_id
+1001         Mark   55   italy    europe
+1000         john   33     usa   america
+1003        cat e   12   china      asia
+=================================================================
+
+
+# combine dataFrame
+appended_df = pd.concat([df1, df2], axis=0)
+appended_df_reset_index = pd.concat([df1, df2], ignore_index=True)
+
+To append them vertically (stacking rows), use axis=0 (which is the default):
+
+Key Points:
+pd.concat() takes a list of DataFrames as its first argument.
+axis=0 (default) concatenates vertically (appends rows).
+axis=1 concatenates horizontally (adds columns).
+ignore_index=True resets the index of the resulting DataFrame.
+If the DataFrames have different columns when concatenating vertically, missing columns will be filled with NaN values. 

@@ -1,0 +1,16 @@
+pip install ipykernel
+python -m ipykernel install --user --name=myenv --display-name "My Virtual Env"
+--user: Installs the kernel for the current user.
+--name=myenv: Specifies the internal name for the kernel (should match your virtual environment name).
+--display-name "My Virtual Env": Sets the name that will appear in the Jupyter Notebook interface.
+
+
+
+
+python -m venv sklearn-env
+sklearn-env\Scripts\activate  # activate
+pip install -U scikit-learn
+
+python -m pip show scikit-learn  # show scikit-learn version and location
+python -m pip freeze             # show all installed packages in the environment
+python -c "import sklearn; sklearn.show_versions()"

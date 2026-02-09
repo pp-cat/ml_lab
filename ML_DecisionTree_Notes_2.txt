@@ -1,0 +1,97 @@
+dummies = pd.get_dummies(adult_tr['marital-status'], prefix='marital',dtype=int)
+
+
+import matplotlib.pyplot as plt
+plt.show()
+bank_train['pdays'].plot(kind='hist', title='Histogram of Days Since Previous')
+plt.hist(data, bins=10)
+
+===============================================================================
+# replace values of pandas
+# replace 999 with NaN value !
+x = bank_train['pdays'].replace({999: np.NaN})
+
+# replace with dictionary !!
+dict_edu={"education_numeric": {"primary":9 , "secondary":12 ,"tertiary": 16,"unknown":np.nan}}
+
+a=bank_train.replace(dict_edu)
+
+mar_cat_processed.replace({'Married-AF-spouse':'Married', 'Married-civ-spouse':'Married', 'Married-spouse-absent':'Married'})
+===============================================================================
+
+
+# find records and columns numbers
+bank_train.shape
+
+# add index 
+bank_train['index'] = pd.Series(range(0,26849))
+
+
+# convert array to series !
+s = pd.Series(arr, name='fruit')
+
+
+dot -Tpng D:\wb\python\ML\adult\cart01.dot -o D:\wb\python\ML\adult\cart01.png
+
+===============================================================================
+# new env for jupyter
+
+python -m venv my_env
+pip install ipykernel
+python -m ipykernel install --user --name=my_env --display-name "My Virtual Environment"
+pip install -U scikit-learn
+===============================================================================
+import graphviz
+graphviz.Source("D:\\wb\\python\\ML\\adult\\cart01.dot")
+
+
+#with open("D:\\wb\\python\\ML\\adult\\cart01.dot") as f:
+#    dot_graph = f.read()
+#graphviz.Source(dot_graph).render('tree', format='png', view=True)  # saves and opens the image
+==============================================================================
+
+# get  current path
+import os
+cwd = os.getcwd()
+print(cwd)
+
+# This resolves the script file path and returns its directory
+script_dir = os.path.dirname(os.path.abspath(__file__))
+print(script_dir)
+
+# change current working directory
+os.chdir('/path/to/new/dir')
+
+# get absolute path of the current directory (equivalent)
+abs_path = os.path.abspath(os.curdir)
+
+
+==============================================================================
+
+OrdinalEncoder — quick example for 1‑D data
+When your data is one dimensional you must pass a 2‑D array (n_samples, 1) to sklearn.preprocessing.OrdinalEncoder — reshape your 1‑D array before fitting or transforming.
+import numpy as np
+from sklearn.preprocessing import OrdinalEncoder
+
+# example 1-D categorical data
+X = np.array(['low', 'medium', 'high', 'medium', 'low'])
+
+# reshape to (n_samples, 1)
+X_2d = X.reshape(-1, 1)
+
+encoder = OrdinalEncoder()
+encoded = encoder.fit_transform(X_2d)   # result is shape (n_samples, 1)
+
+print("Encoded (2D):\n", encoded.ravel())  # .ravel() to print as 1-D
+print("Categories:", encoder.categories_)
+# inverse transform back to original labels
+decoded = encoder.inverse_transform(encoded)
+print("Decoded:\n", decoded.ravel())
+
+
+Notes and common variants
+- If you have a pandas Series, convert with .values.reshape(-1, 1) or use Series.to_frame() before encoding.
+- To get a 1‑D numeric array after transform, use encoded.ravel() or encoded.flatten().
+- If you need a specific ordering for categories, pass categories=[['low','medium','high']] to OrdinalEncoder.
+
+==============================================================================

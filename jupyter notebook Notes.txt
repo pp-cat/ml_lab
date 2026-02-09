@@ -1,0 +1,68 @@
+Overview
+Running Jupyter on another computer means hosting the Jupyter server on the remote machine and connecting to it from your local browser. Common approaches are SSH tunneling for secure personal access, exposing the server to a LAN/VPN with TLS for wider access, or using JupyterHub for multi-user accounts and central management.
+
+Quick checklist (what you need)
+- Remote machine with Python + Jupyter installed.
+- Network access (SSH or open port + firewall rule).
+- A way to authenticate users: Jupyter password/token, SSH keys, system users, or JupyterHub for many users.
+- Optional: TLS certificate (Let's Encrypt) and reverse proxy (nginx) for secure HTTPS access.
+
+Option A — Secure single-user access via SSH tunnel (recommended for one person)
+- On remote machine start Jupyter without opening a browser:
+- jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
+- From your local machine create an SSH tunnel:
+- ssh -L 8888:localhost:8888 user@remote-host
+- Open http://localhost:8888 in your local browser and use the token or set a password (see below). This keeps the server bound to localhost on the remote host and tunnels traffic over SSH.
+
+Option B — Expose Jupyter to LAN or internet (when you need access from multiple machines)
+- Configure Jupyter to listen on all interfaces:
+- jupyter notebook --no-browser --ip=0.0.0.0 --port=8888
+- Generate or edit config:
+- jupyter notebook --generate-config
+- Edit ~/.jupyter/jupyter_notebook_config.py: set c.NotebookApp.ip = '0.0.0.0'; c.NotebookApp.port = 8888; c.NotebookApp.open_browser = False.
+- Open firewall port (example with ufw):
+- sudo ufw allow 8888/tcp
+- Protect with TLS + reverse proxy (recommended) and restrict by firewall or VPN; see Security below.
+
+Setting an account and authentication
+- Single-user password (simple):
+- Run: jupyter notebook password
+- This stores a hashed password in your Jupyter config and prompts clients to enter it on connect.
+- Token-based (default):
+- Jupyter prints a URL with a one-time token on startup; use that URL to authenticate.
+- System users via SSH:
+- Create separate Linux accounts on the remote server; each user SSHs in and tunnels to run/connect to their own server or use shared server with user isolation.
+- Multi-user: JupyterHub (recommended for teams/classrooms)
+- Install JupyterHub and a spawner (e.g., SystemSpawner, DockerSpawner) to provide per-user servers and account management; JupyterHub supports PAM, OAuth, or external authentication providers for centralized login, and scales better than single Notebook installations.
+
+Security best practices
+- Prefer SSH tunnels or VPN rather than opening Jupyter to the public internet.
+- Always enable HTTPS if exposing to wider networks: obtain certificate (Let's Encrypt) and either configure NotebookApp.certfile and keyfile or put nginx in front as an HTTPS reverse proxy.
+- Use strong passwords or external auth (OAuth, LDAP) and restrict firewall rules to known IPs.
+- Run Jupyter under a dedicated system user or container to limit exposure.
+
+Running Jupyter as a service (auto-start)
+- Create a systemd unit (/etc/systemd/system/jupyter.service):
+- [Unit] Description=Jupyter Notebook
+- [Service] Type=simple User=youruser ExecStart=/usr/bin/jupyter notebook --config=/home/youruser/.jupyter/jupyter_notebook_config.py
+- [Install] WantedBy=multi-user.target
+- Enable and start:
+- sudo systemctl daemon-reload
+- sudo systemctl enable --now jupyter
+- Check logs:
+- sudo journalctl -u jupyter -f
+
+Short example commands (summary)
+- Start headless with password:
+- jupyter notebook --no-browser --ip=0.0.0.0 --port=8888
+- jupyter notebook password
+- SSH tunnel from client:
+- ssh -L 8888:localhost:8888 user@remote-host
+- Create systemd service: follow the example above to auto-start.
+
+When to use JupyterHub
+- Need multiple named accounts, per-user environments, quotas, or central admin. Install JupyterHub, choose a spawner (system, docker, k8s), and configure authentication (PAM, OAuth, etc.) for proper account provisioning and access control.
+
+References
+- Remote Jupyter run guide and examples.
+- SSH tunnel approach and practical tips.
